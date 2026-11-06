@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "repository": {
+    "path": "repository/click-8.1.7",
+    "include_prefixes": [
+      "src/click/"
+    ],
+    "version": "8.1.7",
+    "id": "pallets/click"
+  },
+  "development_questions": "data/questions_dev20.json",
+  "evaluation_questions": "data/questions_eval.json",
+  "expected_development_count": 20,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "embedding_batch_size": 32,
+  "overlap_lines": 10,
+  "alpha_values": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0
+  ],
+  "chunk_sizes": [
+    60,
+    70,
+    80,
+    90
+  ],
+  "selection_k": 5,
+  "k_values": [
+    3,
+    5,
+    7
+  ],
+  "candidate_k": 20,
+  "rrf_k": 60,
+  "min_gold_coverage": 0.25,
+  "min_overlap_lines": 1,
+  "seed": 20261009,
+  "llm": {
+    "model": "gemma4:e4b",
+    "url": "http://127.0.0.1:11434",
+    "think": false,
+    "num_ctx": 8192,
+    "max_new_tokens": 1024,
+    "timeout": 600,
+    "context_token_budget": 3000,
+    "token_count_mode": "utf8_bytes_upper_estimate",
+    "tokenizer_path": null,
+    "prompt_reserve_tokens": 512
+  },
+  "expected_evaluation_count": 80,
+  "timing": {
+    "warmups": 1,
+    "repeats": 3
+  },
+  "cache_embeddings": false,
+  "k_selection": {
+    "recall_tolerance": 0.02,
+    "precision_tolerance": 0.02,
+    "max_context_tokens": 50000,
+    "latency_multiplier": 2.0,
+    "latency_slack_seconds": 0.01
+  }
+}

@@ -1,0 +1,1492 @@
+[
+  {
+    "id": "q01_exact_result_callback_registration",
+    "question": "Locate MultiCommand.result_callback. What happens when a result callback is registered after one already exists, and how does replace change that behavior?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1566,
+        "end_line": 1609,
+        "symbol": "MultiCommand.result_callback",
+        "rationale": "The decorator either stores the new function directly or wraps the existing and new callbacks in sequence."
+      }
+    ],
+    "gold_answer": "If there is no existing callback, or replace is true, it stores the new function directly. Otherwise it creates a wrapper that passes the result through the old callback first and passes that return value to the new callback with the same remaining arguments. It stores and returns the wrapped function."
+  },
+  {
+    "id": "q02_exact_lookup_default_callable",
+    "question": "Locate Context.lookup_default. What does it return for a missing default-map entry, a plain value, and a callable value with call=True versus call=False?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 658,
+        "end_line": 676,
+        "symbol": "Context.lookup_default",
+        "rationale": "The method looks up the named default and decides whether to invoke a callable value."
+      }
+    ],
+    "gold_answer": "If default_map is absent or has no entry for the name, it returns None. A plain mapped value is returned unchanged. For a callable mapped value, call=True invokes it and returns its result, while call=False returns the callable itself without invoking it."
+  },
+  {
+    "id": "q03_exact_split_arg_string",
+    "question": "Locate split_arg_string. How does it split a shell-style argument string without failing on an unfinished quote or escape?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 125,
+        "end_line": 156,
+        "symbol": "split_arg_string",
+        "rationale": "The function configures shlex and catches an invalid end-of-string state to preserve the partial token."
+      }
+    ],
+    "gold_answer": "It uses POSIX shlex with whitespace splitting enabled and comment parsing disabled. Complete tokens are appended normally. If shlex raises ValueError at an unfinished quote or escape, it appends lex.token, the partial token without the quote or escape marker, and returns the collected list."
+  },
+  {
+    "id": "q04_exact_help_option_names",
+    "question": "How does Command.get_help_option_names avoid creating a help option that conflicts with a parameter's existing option spelling?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1283,
+        "end_line": 1289,
+        "symbol": "Command.get_help_option_names",
+        "rationale": "This short method starts from context help names and subtracts both primary and secondary spellings already used by parameters."
+      }
+    ],
+    "gold_answer": "It starts with the context's help_option_names as a set, removes every existing parameter's opts and secondary_opts from that set, and returns the remaining names as a list."
+  },
+  {
+    "id": "q05_exact_resolve_command",
+    "question": "What lookup and normalization steps does MultiCommand.resolve_command use for the first argument, and what does it return when a command is found?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1722,
+        "end_line": 1747,
+        "symbol": "MultiCommand.resolve_command",
+        "rationale": "The method performs direct and normalized lookup, handles unresolved names, and constructs the three-part result."
+      }
+    ],
+    "gold_answer": "It converts args[0] to a string and tries get_command with that name. If that fails and the context has token_normalize_func, it normalizes the name and tries again. For a found command it returns (resolved_name, command, args[1:]). If none is found during normal parsing, it may reparse an option-looking token and then fails using the original name; resilient parsing instead returns (None, None, args[1:])."
+  },
+  {
+    "id": "q06_exact_parameter_source_tracking",
+    "question": "Which Context methods record and retrieve the source of a parameter value, and what does retrieval return when no source has been recorded?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 806,
+        "end_line": 831,
+        "symbol": "Context.set_parameter_source; Context.get_parameter_source",
+        "rationale": "The two methods write to and read from the same parameter-source mapping, with a documented absent-source result."
+      }
+    ],
+    "gold_answer": "set_parameter_source stores the given ParameterSource under the parameter name in the context's _parameter_source mapping. get_parameter_source looks up that name in the mapping and returns None if the source was never recorded; the source distinguishes a supplied value from one merely equal to its default."
+  },
+  {
+    "id": "q07_exact_argument_make_metavar",
+    "question": "How does Argument.make_metavar construct the displayed argument name for optional or multiple-value arguments?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 3006,
+        "end_line": 3016,
+        "symbol": "Argument.make_metavar",
+        "rationale": "The method shows the explicit metavar, type-provided metavar, uppercase-name fallback, brackets, and ellipsis rules."
+      }
+    ],
+    "gold_answer": "An explicit metavar is returned unchanged. Otherwise it takes the parameter type's metavar or falls back to the argument name in uppercase. It wraps the result in brackets when the argument is not required and appends '...' when nargs is not 1."
+  },
+  {
+    "id": "q08_exact_detect_program_name",
+    "question": "How does _detect_program_name choose the program name shown in help for an executed file versus a module run with python -m?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 520,
+        "end_line": 572,
+        "symbol": "_detect_program_name",
+        "rationale": "The helper selects a basename for file or entry-point execution and constructs a python -m name for package or submodule execution."
+      }
+    ],
+    "gold_answer": "It uses the supplied path or sys.argv[0] and the supplied main module or sys.modules['__main__']. For ordinary file or entry-point execution, identified by a missing or empty __package__ (including a Windows executable edge case), it returns only the path's basename. For module execution, it starts from __package__, appends the file's stem unless that stem is '__main__', and returns 'python -m ' followed by the assembled module name."
+  },
+  {
+    "id": "q09_exact_choice_convert",
+    "question": "How does Choice.convert compare an input value with its allowed choices while preserving the original choice in its return value?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 268,
+        "end_line": 304,
+        "symbol": "Choice.convert",
+        "rationale": "The method builds normalized-to-original mappings, optionally case-folds them, and returns the original choice on a match."
+      }
+    ],
+    "gold_answer": "It maps comparison keys to their original choices, applying the context's token_normalize_func to both input and choices when configured, then casefolding both sides when case_sensitive is false. A match returns the original choice spelling from the mapping. An unmatched value calls fail with an error listing allowed choices."
+  },
+  {
+    "id": "q10_exact_datetime_convert",
+    "question": "What sequence does DateTime.convert follow when given a datetime object or a string that may match one of several formats?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 371,
+        "end_line": 398,
+        "symbol": "DateTime._try_to_convert_date; DateTime.convert",
+        "rationale": "The helper and conversion method show unchanged datetime values, ordered format attempts, and the failure branch."
+      }
+    ],
+    "gold_answer": "An existing datetime is returned unchanged. Otherwise convert tries each configured format in order using datetime.strptime via _try_to_convert_date, returning the first successful conversion. If all attempts fail, it calls fail with a message listing the expected format or formats."
+  },
+  {
+    "id": "q11_exact_tuple_convert",
+    "question": "How does Tuple.convert validate its number of input values and apply its component parameter types?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 979,
+        "end_line": 996,
+        "symbol": "Tuple.convert",
+        "rationale": "The method compares input length with the type list and then converts paired values into a result tuple."
+      }
+    ],
+    "gold_answer": "It requires exactly one input value per component type and calls fail with the expected and given counts when lengths differ. With matching lengths, it pairs each type with its corresponding value, calls that type with the value, parameter, and context, and returns the converted values as a tuple."
+  },
+  {
+    "id": "q12_exact_format_filename",
+    "question": "How does format_filename make a path safe to display, and what changes when shorten is true?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 404,
+        "end_line": 443,
+        "symbol": "format_filename",
+        "rationale": "The function chooses a basename or full filesystem path, then decodes or re-encodes it with replacement for invalid bytes."
+      }
+    ],
+    "gold_answer": "With shorten true it takes os.path.basename; otherwise it converts the path-like object using os.fspath. Byte paths are decoded using the filesystem encoding with replacement. Text paths are encoded as UTF-8 with surrogateescape and decoded with replacement, so invalid bytes or surrogate escapes become the replacement character instead of causing a display error."
+  },
+  {
+    "id": "q13_exact_get_app_dir",
+    "question": "Which platform-specific locations can get_app_dir choose for an application's configuration directory, and how do roaming and force_posix affect the choice?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 446,
+        "end_line": 492,
+        "symbol": "get_app_dir",
+        "rationale": "The function contains the Windows, forced POSIX, macOS, and XDG/default-Unix location branches."
+      }
+    ],
+    "gold_answer": "On Windows it joins app_name to APPDATA when roaming is true or LOCALAPPDATA otherwise, falling back to the home directory if that variable is absent. On other systems force_posix selects a dot-prefixed, POSIX-normalized name under home. Otherwise macOS uses ~/Library/Application Support/app_name, while other Unix systems use XDG_CONFIG_HOME (or ~/.config) plus the POSIX-normalized app name."
+  },
+  {
+    "id": "q14_exact_secho",
+    "question": "What does secho do to a non-byte message before output, and which arguments does it pass to echo?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 603,
+        "end_line": 634,
+        "symbol": "secho",
+        "rationale": "The function conditionally styles the message and forwards output-control arguments to echo."
+      }
+    ],
+    "gold_answer": "If message is present and is neither bytes nor bytearray, secho applies style(message, **styles). Byte messages bypass styling. It then calls echo with the resulting message and the file, nl, err, and color arguments."
+  },
+  {
+    "id": "q15_exact_completion_class_registry",
+    "question": "Where are shell-completion handler classes registered and retrieved by shell name, and what happens for an unregistered name?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 407,
+        "end_line": 434,
+        "symbol": "add_completion_class; get_completion_class",
+        "rationale": "These helpers write to and query the shell-completion class registry without resolving an incomplete argument."
+      }
+    ],
+    "gold_answer": "add_completion_class stores the ShellComplete subclass in _available_shells using the supplied name or cls.name, and returns the class. get_completion_class performs a dictionary lookup by shell name; it returns None when no class is registered under that name."
+  },
+  {
+    "id": "q16_exact_clirunner_isolated_filesystem",
+    "question": "What does CliRunner.isolated_filesystem yield, and how does cleanup differ when temp_dir is supplied?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/testing.py",
+        "start_line": 451,
+        "end_line": 479,
+        "symbol": "CliRunner.isolated_filesystem",
+        "rationale": "The context manager creates and yields a temporary directory, restores the original CWD, and conditionally removes the directory."
+      }
+    ],
+    "gold_answer": "It saves the current working directory, creates a temporary directory (under temp_dir when provided), changes into it, and yields that directory's path. On exit it restores the original working directory. It attempts to remove the created directory only when temp_dir was omitted; when supplied, the directory remains for the caller."
+  },
+  {
+    "id": "q17_semantic_parameter_source_precedence",
+    "question": "If the same parameter has a command-line value, an environment variable, a context default-map entry, and a declared default, which value wins, and what is the fallback order when higher-priority values are absent?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2275,
+        "end_line": 2293,
+        "symbol": "Parameter.consume_value",
+        "rationale": "The method tests each value source in priority order and returns the corresponding ParameterSource."
+      }
+    ],
+    "gold_answer": "A non-None command-line value wins. Otherwise Click tries the parameter's environment value, then the context default map, then the parameter's declared default. It returns both the selected value and a ParameterSource identifying where it came from."
+  },
+  {
+    "id": "q18_semantic_style_reset",
+    "question": "If a program styles text with a foreground colour and bold=True, how does reset=False change the resulting string compared with the default reset=True?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 552,
+        "end_line": 588,
+        "symbol": "style",
+        "rationale": "The function adds the selected ANSI colour and bold codes before text, then conditionally appends the reset-all code."
+      }
+    ],
+    "gold_answer": "Click converts non-string text to a string, prepends ANSI codes for the requested foreground colour and bold state, and appends the text. By default reset=True adds an ANSI reset-all code after the text so the style does not carry over. reset=False omits only that trailing reset, allowing following terminal output to inherit the style."
+  },
+  {
+    "id": "q19_semantic_long_usage_layout",
+    "question": "When a command name and usage prefix leave too little room on the first line, how does Click lay out the usage arguments?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/formatting.py",
+        "start_line": 145,
+        "end_line": 183,
+        "symbol": "HelpFormatter.write_usage",
+        "rationale": "The width comparison determines whether arguments share the prefix line or begin on a separate, indented line."
+      }
+    ],
+    "gold_answer": "The formatter compares its remaining text width with the visible width of the usage prefix plus 20 characters. If that threshold is not met, it writes the prefix and program name alone, starts the arguments on the next line, and wraps them under an indent derived from the current indent or prefix width plus four spaces. Otherwise it wraps arguments beside the prefix."
+  },
+  {
+    "id": "q20_semantic_nested_usage_path",
+    "question": "For a subcommand below a parent command with parameters, what does its displayed command path include, and what happens if the child context has no info_name?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 600,
+        "end_line": 616,
+        "symbol": "Context.command_path",
+        "rationale": "The property combines parent command paths, parent parameter usage pieces, and the child's optional info name."
+      }
+    ],
+    "gold_answer": "Click starts with the child's info_name when present. If a parent exists, it prefixes the parent's command_path; when the parent's command is a Command, it also appends the parent's parameter usage pieces before the child name. If the child has no info_name, it contributes no name of its own, and leading whitespace is removed from the final path."
+  },
+  {
+    "id": "q21_semantic_string_bytes_decoding",
+    "question": "If a STRING parameter receives bytes that cannot be decoded with Click's command-line argument encoding, which decoding fallbacks does it try, and what happens for a non-bytes value?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 200,
+        "end_line": 220,
+        "symbol": "StringParamType.convert",
+        "rationale": "The converter tries the argument encoding, optionally the distinct filesystem encoding, then UTF-8 with replacement; non-bytes are stringified."
+      }
+    ],
+    "gold_answer": "For bytes, Click first decodes using its command-line argument encoding. If that raises UnicodeError and the filesystem encoding differs, it tries the filesystem encoding. If that also fails, or the two encodings are the same, it decodes as UTF-8 with replacement for invalid bytes. A non-bytes value is converted with str(value)."
+  },
+  {
+    "id": "q22_semantic_boolean_text_values",
+    "question": "If a command option uses Click's boolean parameter type, which common text forms become true or false, and is surrounding whitespace significant?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 593,
+        "end_line": 612,
+        "symbol": "BoolParamType.convert",
+        "rationale": "The converter normalizes text and enumerates accepted true and false aliases."
+      }
+    ],
+    "gold_answer": "Existing boolean values are returned as booleans. Text is stripped and lowercased, so surrounding whitespace and letter case do not matter. '1', 'true', 't', 'yes', 'y', and 'on' become True; '0', 'false', 'f', 'no', 'n', and 'off' become False. Other text fails validation."
+  },
+  {
+    "id": "q23_semantic_integer_range_clamping",
+    "question": "For IntRange(min=1, max=5, min_open=True, clamp=True), what values result from inputs 0, 1, 3, and 9, and why?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 448,
+        "end_line": 477,
+        "symbol": "_NumberRangeBase.convert",
+        "rationale": "This conversion path detects values outside open or closed bounds and invokes clamping."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 533,
+        "end_line": 539,
+        "symbol": "IntRange._clamp",
+        "rationale": "The integer clamping rule moves one integer inward for an open bound."
+      }
+    ],
+    "gold_answer": "Inputs 0 and 1 both clamp to 2 because the lower bound 1 is open and IntRange moves one integer inward. Input 3 stays 3. Input 9 clamps to the inclusive upper bound 5."
+  },
+  {
+    "id": "q24_semantic_pause_interactive",
+    "question": "What does click.pause() do when either standard input or standard output is not a terminal, and what happens to its message and execution if an interactive user presses Ctrl-C while it waits?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 753,
+        "end_line": 784,
+        "symbol": "pause",
+        "rationale": "The function's terminal guard, message writes, and caught interruption determine its observable behaviour."
+      }
+    ],
+    "gold_answer": "If either stdin or stdout is not a TTY, pause returns immediately without printing or reading. In an interactive terminal it prints the supplied or default message without a newline (unless the message is empty), waits for a key, swallows KeyboardInterrupt or EOFError from that wait, then prints a terminating newline when a message was shown. The err flag sends the message and newline to stderr."
+  },
+  {
+    "id": "q25_semantic_option_token_normalization",
+    "question": "If a context uses a lowercase token_normalize_func, how are option tokens such as --FOO and /BAR normalized, and what happens when there is no context or normalizer?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 109,
+        "end_line": 122,
+        "symbol": "split_opt; normalize_opt",
+        "rationale": "The helper separates the option prefix and normalizes only the remaining token when a context function exists."
+      }
+    ],
+    "gold_answer": "Click separates an option prefix from its name, applies the context's normalizer only to the name, and rejoins them. Thus --FOO becomes --foo and /BAR becomes /bar; the -- and / prefixes stay unchanged. If the context is absent or has no token_normalize_func, the original token is returned unchanged."
+  },
+  {
+    "id": "q26_semantic_unstyle_ansi",
+    "question": "If a string contains ANSI styling sequences mixed with ordinary text, what does click.unstyle return, and what happens when the string has no styling?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 591,
+        "end_line": 600,
+        "symbol": "unstyle",
+        "rationale": "The public helper delegates directly to the ANSI-stripper."
+      },
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 485,
+        "end_line": 486,
+        "symbol": "strip_ansi",
+        "rationale": "The stripper removes ANSI escape matches and leaves unmatched text in place."
+      }
+    ],
+    "gold_answer": "click.unstyle passes the string to strip_ansi, which substitutes an empty string for ANSI escape-sequence matches. The visible text and other unmatched characters remain; if there are no such sequences, the returned string has the same content as the input."
+  },
+  {
+    "id": "q27_semantic_progress_update_threshold",
+    "question": "For a visible progress bar whose update_min_steps is 3, what happens to its position and rendering after three successive update(1) calls, and how does a supplied current_item affect that timing?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 295,
+        "end_line": 319,
+        "symbol": "ProgressBar.update",
+        "rationale": "The method sets a supplied current_item immediately but accumulates steps until the rendering threshold is reached."
+      }
+    ],
+    "gold_answer": "The first two update(1) calls accumulate one and then two pending steps without advancing pos or rendering. The third reaches the threshold, calls make_step(3) to advance pos by three, renders once, and resets the pending count to zero. If a non-None current_item is supplied on a call, it changes immediately rather than waiting for the step threshold."
+  },
+  {
+    "id": "q28_semantic_prompt_default_and_retry",
+    "question": "During prompt(), what happens when a user submits an empty value, an invalid typed value, or a confirmation that does not match the first entry?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 162,
+        "end_line": 187,
+        "symbol": "prompt",
+        "rationale": "The nested input loops implement default substitution, type-validation retry, and confirmation retry."
+      }
+    ],
+    "gold_answer": "An empty first entry uses the supplied default when one exists; without a default, Click asks again. The value is passed through the configured converter, and a UsageError prints an error and restarts the prompt. If confirmation is enabled, the second entry must equal the first entry or Click prints a mismatch error and restarts."
+  },
+  {
+    "id": "q29_semantic_confirmation_defaults",
+    "question": "For confirm(), how are y/yes, n/no, an empty answer, and a negative answer with abort=True handled?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 219,
+        "end_line": 248,
+        "symbol": "confirm",
+        "rationale": "The input loop normalizes replies, applies a non-None default, and optionally aborts after a false answer."
+      }
+    ],
+    "gold_answer": "The reply is stripped and lowercased. 'y' or 'yes' returns True, and 'n' or 'no' returns False. An empty reply uses the default only if the default is not None; otherwise Click reports invalid input and asks again. With abort=True, a false result raises Abort instead of returning False."
+  },
+  {
+    "id": "q30_semantic_group_without_subcommand",
+    "question": "What does Group.invoke do when the user supplies no subcommand, depending on invoke_without_command and chain mode?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1654,
+        "end_line": 1668,
+        "symbol": "Group.invoke",
+        "rationale": "The no-subcommand branch either invokes the group and result callback or reports a missing command."
+      }
+    ],
+    "gold_answer": "If invoke_without_command is false, it fails with 'Missing command.' If true, it enters the group context and invokes the group's own callback. A configured result callback then receives that return value for an ordinary group, or an empty list for a chained group with no subcommands."
+  },
+  {
+    "id": "q31_semantic_unmatched_argument_expansion",
+    "question": "When Click expands a Windows-style argument containing a home marker, environment variable, or glob, what is returned if the final glob matches nothing?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 575,
+        "end_line": 624,
+        "symbol": "_expand_args",
+        "rationale": "The expansion loop applies optional user and environment expansion before globbing and preserves an argument without matches."
+      }
+    ],
+    "gold_answer": "When enabled, Click first expands the home marker and environment variables, then runs glob matching, optionally recursively. Matching paths replace the argument. If the glob has no matches, or an invalid pattern is treated as having no matches, it retains the already user- and environment-expanded argument as one item."
+  },
+  {
+    "id": "q32_semantic_runner_result_streams",
+    "question": "When a CliRunner test reads Result.output, Result.stdout, and Result.stderr, how are captured bytes presented, and when does stderr raise an error?",
+    "category": "semantic_behavior",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/testing.py",
+        "start_line": 133,
+        "end_line": 151,
+        "symbol": "Result.output; Result.stdout; Result.stderr",
+        "rationale": "These properties decode and normalize captured streams, and stderr guards against unavailable separate capture."
+      }
+    ],
+    "gold_answer": "Result.output is an alias for stdout. stdout and separately captured stderr decode their bytes with the runner's charset using replacement for bad bytes and normalize CRLF to LF. Accessing stderr raises ValueError when the runner did not capture stderr separately."
+  },
+  {
+    "id": "q33_cross_typed_object_injection",
+    "question": "For a callback wrapped by make_pass_decorator(MyState, ensure=True), how is the injected object chosen across nested contexts, and what happens when none exists?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 75,
+        "end_line": 94,
+        "symbol": "make_pass_decorator.<locals>.new_func",
+        "rationale": "The wrapper selects ensure_object and injects the resulting object."
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 625,
+        "end_line": 644,
+        "symbol": "Context.find_object; Context.ensure_object",
+        "rationale": "The search walks toward parent contexts and construction occurs on the current context only if no match exists."
+      }
+    ],
+    "gold_answer": "The decorator gets the active context and calls ensure_object(MyState). find_object searches from that context outward through its parents for the nearest MyState instance. If none exists, ensure_object creates MyState() and stores it on the current context before the wrapper passes it to the callback."
+  },
+  {
+    "id": "q34_cross_meta_key_inheritance",
+    "question": "A nested command uses pass_meta_key('app.session'). Why can it read a value placed in its parent context's meta dictionary, and how is the value passed to the callback?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 298,
+        "end_line": 303,
+        "symbol": "Context.__init__",
+        "rationale": "A child receives its parent's meta dictionary."
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 508,
+        "end_line": 533,
+        "symbol": "Context.meta",
+        "rationale": "The property exposes the shared dictionary."
+      },
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 114,
+        "end_line": 120,
+        "symbol": "pass_meta_key.<locals>.new_func",
+        "rationale": "The wrapper reads the key and prepends its value to callback arguments."
+      }
+    ],
+    "gold_answer": "The child context inherits the parent's meta dictionary rather than copying it. pass_meta_key reads ctx.meta['app.session'] from the active child context and passes that value as the callback's first argument. A missing key raises KeyError."
+  },
+  {
+    "id": "q35_cross_option_prompt_processing",
+    "question": "When an option is configured to prompt for a missing value, how does it use terminal prompting, and why is a Boolean flag handled differently from a typed value?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2870,
+        "end_line": 2894,
+        "symbol": "Option.prompt_for_value",
+        "rationale": "The option chooses confirm for Boolean flags and prompt with a conversion callback for other values."
+      },
+      {
+        "path": "src/click/termui.py",
+        "start_line": 149,
+        "end_line": 187,
+        "symbol": "prompt",
+        "rationale": "The terminal prompt applies value_proc, retries usage errors, and may request confirmation."
+      },
+      {
+        "path": "src/click/termui.py",
+        "start_line": 190,
+        "end_line": 246,
+        "symbol": "confirm",
+        "rationale": "The yes/no helper handles the Boolean case."
+      }
+    ],
+    "gold_answer": "Option.prompt_for_value computes its default once. For a Boolean flag it calls confirm to obtain a yes/no value. For other options it calls prompt with the option's type and a value_proc that runs process_value on entered text; prompt retries after a usage error and can require a matching second entry."
+  },
+  {
+    "id": "q36_cross_prompt_type_inference",
+    "question": "If click.prompt is called without a type or value_proc but with default=10, how is typed input produced and what happens after an invalid entry?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 149,
+        "end_line": 179,
+        "symbol": "prompt",
+        "rationale": "The prompt infers a converter from the default and retries conversion errors."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 999,
+        "end_line": 1041,
+        "symbol": "convert_type",
+        "rationale": "An integer default selects the INT parameter type."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 76,
+        "end_line": 83,
+        "symbol": "ParamType.__call__",
+        "rationale": "Calling the inferred type delegates non-null input to conversion."
+      }
+    ],
+    "gold_answer": "prompt calls convert_type(None, 10), which infers Click's INT type. Entered numeric text is converted to an integer. A conversion UsageError causes an error message and another prompt; an empty entry uses the default 10."
+  },
+  {
+    "id": "q37_cross_boolean_flag_registration",
+    "question": "How does a dual-form Boolean option such as --verbose/--no-verbose become two parser spellings that store opposite values in one destination?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2695,
+        "end_line": 2732,
+        "symbol": "Option.add_to_parser",
+        "rationale": "The high-level option registers primary and secondary spellings with True and False constants."
+      },
+      {
+        "path": "src/click/parser.py",
+        "start_line": 291,
+        "end_line": 315,
+        "symbol": "OptionParser.add_option",
+        "rationale": "The parser indexes both spellings under a shared destination."
+      }
+    ],
+    "gold_answer": "Option.add_to_parser uses store_const for a flag. It registers the primary spelling with const=True and the secondary spelling with const=False, both with the same destination name. OptionParser normalizes and indexes each spelling, so either form stores its constant in one parameter."
+  },
+  {
+    "id": "q38_cross_option_help_layout",
+    "question": "How does an option's declaration and help text become a wrapped row under the command's Options section in --help output?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2734,
+        "end_line": 2758,
+        "symbol": "Option.get_help_record",
+        "rationale": "The option makes a display term from its spellings and metavar."
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 1378,
+        "end_line": 1388,
+        "symbol": "Command.format_options",
+        "rationale": "The command gathers visible options into an Options section."
+      },
+      {
+        "path": "src/click/formatting.py",
+        "start_line": 210,
+        "end_line": 250,
+        "symbol": "HelpFormatter.write_dl",
+        "rationale": "The formatter sizes columns and wraps the help text."
+      }
+    ],
+    "gold_answer": "Each visible option supplies a pair consisting of displayed spellings/metavar and help text. Command.format_options collects these pairs inside an Options section. HelpFormatter.write_dl sizes the first column and wraps second-column text into aligned continuation lines."
+  },
+  {
+    "id": "q39_cross_completion_entry_dispatch",
+    "question": "When a command's completion environment variable is set, which helper intercepts it and how does the instruction choose between a shell source script and suggestions?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1123,
+        "end_line": 1153,
+        "symbol": "BaseCommand._main_shell_completion",
+        "rationale": "The hook derives and checks the environment variable, delegates completion, and exits with its status."
+      },
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 16,
+        "end_line": 52,
+        "symbol": "shell_complete",
+        "rationale": "The dispatcher selects a shell implementation and handles source versus complete instructions."
+      }
+    ],
+    "gold_answer": "_main_shell_completion derives _PROG_COMPLETE unless given a variable, reads its instruction, and returns to normal execution when the variable is absent. Otherwise it delegates to shell_complete and exits with the returned status. The dispatcher selects a shell class and emits either comp.source() for a source instruction or comp.complete() for a complete instruction; unsupported values return status 1."
+  },
+  {
+    "id": "q40_cross_parameter_choice_completion",
+    "question": "For a Choice-valued parameter, how are completion candidates selected when no custom completion callback exists, and what changes if a custom callback returns strings?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2425,
+        "end_line": 2446,
+        "symbol": "Parameter.shell_complete",
+        "rationale": "The parameter delegates to its type unless a custom callback takes precedence, and wraps returned strings."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 309,
+        "end_line": 330,
+        "symbol": "Choice.shell_complete",
+        "rationale": "Choice prefix-matches configured values using its case-sensitivity setting."
+      },
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 55,
+        "end_line": 85,
+        "symbol": "CompletionItem",
+        "rationale": "Each suggestion carries a value and optional metadata."
+      }
+    ],
+    "gold_answer": "Without a custom callback, Parameter.shell_complete delegates to Choice.shell_complete. Choice stringifies configured choices, keeps those beginning with the incomplete text using its case-sensitivity setting, and wraps matches in CompletionItem. A custom callback takes precedence; plain strings it returns are converted into CompletionItem instances."
+  },
+  {
+    "id": "q41_cross_path_completion_zsh",
+    "question": "For a Path parameter with dir_okay=True and file_okay=False, how does Click signal directory completion to Zsh?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 930,
+        "end_line": 946,
+        "symbol": "Path.shell_complete",
+        "rationale": "The Path type creates a directory-typed CompletionItem."
+      },
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 368,
+        "end_line": 369,
+        "symbol": "ZshComplete.format_completion",
+        "rationale": "Zsh serializes the item type with its value."
+      }
+    ],
+    "gold_answer": "Path.shell_complete returns a CompletionItem with type='dir' and the incomplete path as its value. ZshComplete.format_completion serializes that type before the value, so the Zsh completion script treats the candidate as a directory path."
+  },
+  {
+    "id": "q42_cross_invalid_integer_error",
+    "question": "If an integer option receives nonnumeric text, how does the type converter turn that into an option-specific CLI error with exit code 2?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 129,
+        "end_line": 136,
+        "symbol": "ParamType.fail",
+        "rationale": "Type conversion failure raises BadParameter with parameter/context data."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 404,
+        "end_line": 419,
+        "symbol": "_NumberParamTypeBase.convert",
+        "rationale": "An invalid numeric conversion calls fail."
+      },
+      {
+        "path": "src/click/exceptions.py",
+        "start_line": 56,
+        "end_line": 83,
+        "symbol": "UsageError",
+        "rationale": "Usage errors carry exit code 2 and display usage with their message."
+      },
+      {
+        "path": "src/click/exceptions.py",
+        "start_line": 86,
+        "end_line": 125,
+        "symbol": "BadParameter.format_message",
+        "rationale": "The bad parameter message derives an option-specific hint."
+      }
+    ],
+    "gold_answer": "The numeric converter catches ValueError and calls ParamType.fail, which raises BadParameter with the option and context. BadParameter formats the invalid-value message using the option hint. Its UsageError parent has exit code 2 and displays usage, a help hint, and the formatted error."
+  },
+  {
+    "id": "q43_cross_atomic_open_file",
+    "question": "With click.open_file(path, mode='w', lazy=False, atomic=True), why is data first written to a sibling file and when is the destination replaced?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 391,
+        "end_line": 401,
+        "symbol": "open_file",
+        "rationale": "The helper forwards atomic mode to open_stream for an eager open."
+      },
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 398,
+        "end_line": 451,
+        "symbol": "open_stream",
+        "rationale": "Atomic mode creates a temporary file next to the destination and returns an atomic wrapper."
+      },
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 454,
+        "end_line": 470,
+        "symbol": "_AtomicFile.close",
+        "rationale": "Closing the wrapper replaces the destination with the temporary file."
+      }
+    ],
+    "gold_answer": "open_file forwards atomic=True to open_stream. The latter creates a uniquely named sibling temporary file and wraps it in _AtomicFile, so writes do not immediately alter the destination. Closing the wrapper closes the temporary stream and calls os.replace to move it over the destination."
+  },
+  {
+    "id": "q44_cross_echo_binary_stream",
+    "question": "When click.echo receives bytes but is given a text output stream with a binary buffer, which stream does it write to and how are flushes handled?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 275,
+        "end_line": 303,
+        "symbol": "echo",
+        "rationale": "The bytes branch looks for a binary writer, flushes text output, then writes and flushes the binary stream."
+      },
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 187,
+        "end_line": 202,
+        "symbol": "_find_binary_writer",
+        "rationale": "The helper accepts an already-binary stream or an eligible .buffer writer."
+      }
+    ],
+    "gold_answer": "echo uses _find_binary_writer to find either the original binary stream or its binary .buffer. When one exists, it first flushes the original text stream, writes the bytes directly to the binary writer, flushes that writer, and returns. If none exists, it falls through to writing on the given stream."
+  },
+  {
+    "id": "q45_cross_edit_tempfile_return",
+    "question": "How does click.edit(text, require_save=True) hand work to the editor implementation, and why can it return None even after an editor opened?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 672,
+        "end_line": 680,
+        "symbol": "edit",
+        "rationale": "The public helper constructs Editor and selects text editing."
+      },
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 489,
+        "end_line": 523,
+        "symbol": "Editor.get_editor; Editor.edit_file",
+        "rationale": "The implementation selects and launches an editor for a file."
+      },
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 525,
+        "end_line": 570,
+        "symbol": "Editor.edit",
+        "rationale": "The text path writes a temp file, checks its modification time, reads saved content, and removes the file."
+      }
+    ],
+    "gold_answer": "The public helper constructs Editor(require_save=True) and calls Editor.edit for text input. Editor.edit writes a temporary file and opens it in the selected editor. If its modification time did not change, require_save makes the result None; otherwise the edited content is read and decoded. The temporary file is removed in a finally block."
+  },
+  {
+    "id": "q46_cross_completion_context_chain",
+    "question": "During shell completion for a chained command group, how does Click follow completed subcommands without running their callbacks or prompting for values?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 495,
+        "end_line": 549,
+        "symbol": "_resolve_context",
+        "rationale": "Completion uses resilient parsing to build child contexts and traverses each command in a chain."
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 1722,
+        "end_line": 1747,
+        "symbol": "MultiCommand.resolve_command",
+        "rationale": "The command name is resolved, optionally normalized, and returned with remaining arguments."
+      }
+    ],
+    "gold_answer": "_resolve_context first sets resilient_parsing=True and builds the root context. For a chained MultiCommand, it repeatedly calls resolve_command for the next name and builds a child context with allow_extra_args=True, allow_interspersed_args=False, and resilient parsing. It follows remaining arguments into each child context, returning the last subcommand context without invoking callbacks or prompting."
+  },
+  {
+    "id": "q47_cross_clirunner_prompt_isolation",
+    "question": "In a CliRunner test, how are visible and hidden prompt reads simulated, and how are the original prompt functions restored afterward?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/testing.py",
+        "start_line": 277,
+        "end_line": 289,
+        "symbol": "CliRunner.isolation",
+        "rationale": "The simulated prompt readers use test input, echoing visible input but not hidden input."
+      },
+      {
+        "path": "src/click/testing.py",
+        "start_line": 310,
+        "end_line": 316,
+        "symbol": "CliRunner.isolation",
+        "rationale": "The runner substitutes the terminal input functions."
+      },
+      {
+        "path": "src/click/testing.py",
+        "start_line": 340,
+        "end_line": 345,
+        "symbol": "CliRunner.isolation",
+        "rationale": "The finally block restores the original terminal functions and streams."
+      },
+      {
+        "path": "src/click/termui.py",
+        "start_line": 132,
+        "end_line": 147,
+        "symbol": "prompt.<locals>.prompt_func",
+        "rationale": "The public prompt selects visible or hidden input from the functions patched by the runner."
+      }
+    ],
+    "gold_answer": "CliRunner.isolation replaces termui.visible_prompt_func and hidden_prompt_func with readers backed by the test input. The visible reader echoes entered text to captured output; the hidden reader prints the prompt but not the entered value. termui.prompt selects one based on hide_input. The isolation finally block restores the original functions and standard streams."
+  },
+  {
+    "id": "q48_cross_pager_selection",
+    "question": "How does echo_via_pager prepare text for paging, and how does the pager implementation choose between direct output, a configured pager, and a fallback?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 251,
+        "end_line": 280,
+        "symbol": "echo_via_pager",
+        "rationale": "The public helper normalizes text or a generator, appends a newline, and delegates to pager."
+      },
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 360,
+        "end_line": 392,
+        "symbol": "pager",
+        "rationale": "The implementation selects null, pipe, or temporary-file paging based on TTY status, PAGER, terminal type, and platform."
+      }
+    ],
+    "gold_answer": "echo_via_pager turns a string or iterable into text, appends a newline, and delegates to the internal pager. The pager writes directly when input or output is not a TTY. Otherwise it honors PAGER, avoids paging for dumb/emacs terminals, tries platform-specific defaults such as more or less, then falls back to direct output."
+  },
+  {
+    "id": "q49_error_nested_chain_multicommand",
+    "question": "What happens if a chained MultiCommand is given another MultiCommand as a child, and how does the error hint differ at registration versus later lookup?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 67,
+        "end_line": 88,
+        "symbol": "_check_multicommand",
+        "rationale": "The guard distinguishes chained parent commands and generates registration-specific or lookup-specific RuntimeError hints."
+      }
+    ],
+    "gold_answer": "The check returns normally unless the parent has chain=True and the child is a MultiCommand. For that unsupported nesting it raises RuntimeError. With register=True the hint says adding a multi command as a child of a chained multi command is impossible; otherwise it says one was found as a subcommand during lookup. The message identifies the parent and child names and types."
+  },
+  {
+    "id": "q50_error_bad_parameter_hint",
+    "question": "How does BadParameter.format_message describe an invalid value when it has an explicit parameter hint, a Parameter object, or neither?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/exceptions.py",
+        "start_line": 104,
+        "end_line": 125,
+        "symbol": "BadParameter.format_message",
+        "rationale": "The method chooses an explicit hint, a hint derived from the Parameter, or an unqualified fallback before formatting the message."
+      }
+    ],
+    "gold_answer": "An explicit param_hint takes priority. Otherwise, if a Parameter object is available, the method asks it for an error hint. Either case produces 'Invalid value for <hint>: <message>'. With neither, the result is 'Invalid value: <message>'."
+  },
+  {
+    "id": "q51_error_chain_optional_argument",
+    "question": "What happens if a MultiCommand is created in chain mode with an optional positional Argument among its parameters?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1525,
+        "end_line": 1537,
+        "symbol": "MultiCommand.__init__",
+        "rationale": "The constructor walks chain-mode parameters and explicitly rejects a non-required Argument."
+      }
+    ],
+    "gold_answer": "During construction, a chain-mode MultiCommand inspects its parameters. If any parameter is an Argument with required=False, it raises RuntimeError stating that multi commands in chain mode cannot have optional arguments."
+  },
+  {
+    "id": "q52_error_composite_nargs_mismatch",
+    "question": "What validation occurs when a Parameter with a composite type is given an explicit nargs that differs from that type's arity?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2116,
+        "end_line": 2140,
+        "symbol": "Parameter.__init__",
+        "rationale": "The constructor defaults nargs to composite arity and checks any mismatch in its debug-time validation block."
+      }
+    ],
+    "gold_answer": "If nargs is omitted, the constructor sets it to the composite type's arity. In normal debug-enabled execution, an explicit different nargs raises ValueError identifying the required arity, the type, and the supplied nargs."
+  },
+  {
+    "id": "q53_error_invalid_default_shape",
+    "question": "Which default-value shapes does Parameter.__init__ reject for multiple=True or nargs greater than one?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2142,
+        "end_line": 2174,
+        "symbol": "Parameter.__init__",
+        "rationale": "This validation block checks the outer iterable, the first multi-value item, and the required tuple length."
+      }
+    ],
+    "gold_answer": "In normal debug-enabled execution, None and callable defaults skip this check. With multiple=True, a non-iterable outer default raises ValueError. If nargs is not one, the first default value must itself be iterable (or the single default must be iterable when multiple is false); otherwise ValueError is raised. For nargs greater than one, that first value or single default must also have exactly nargs items."
+  },
+  {
+    "id": "q54_error_variadic_argument_defaults",
+    "question": "What two constructor restrictions apply to an Argument given multiple=True or both nargs=-1 and a non-None default?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2979,
+        "end_line": 2998,
+        "symbol": "Argument.__init__",
+        "rationale": "The constructor rejects the multiple keyword and later rejects a declared default for a variadic argument."
+      }
+    ],
+    "gold_answer": "Passing multiple in the Argument constructor's attributes immediately raises TypeError as an unexpected keyword. After base initialization, normal debug-enabled execution also raises TypeError if an Argument has nargs=-1 and a non-None default."
+  },
+  {
+    "id": "q55_error_unexpected_extra_args",
+    "question": "When Command.parse_args leaves unconsumed arguments, under which context settings does it reject them and under which settings does it keep them?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1399,
+        "end_line": 1421,
+        "symbol": "Command.parse_args",
+        "rationale": "The leftover-argument condition combines args, allow_extra_args, and resilient_parsing before storing ctx.args."
+      }
+    ],
+    "gold_answer": "If leftover args exist and both allow_extra_args and resilient_parsing are false, it calls ctx.fail with a singular or plural 'unexpected extra argument(s)' message. If either setting permits them, it keeps the leftovers in ctx.args and returns them."
+  },
+  {
+    "id": "q56_error_parser_option_no_prefix",
+    "question": "What happens if the parser's Option object is initialized with a bare option name such as 'verbose' instead of a prefixed spelling?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 159,
+        "end_line": 182,
+        "symbol": "Option.__init__",
+        "rationale": "The parser option constructor splits each spelling and rejects one with no option prefix."
+      }
+    ],
+    "gold_answer": "It calls split_opt for each spelling. A bare alphanumeric name has no prefix, so the constructor raises ValueError with 'Invalid start character for option (verbose)' before registering it as a short or long option."
+  },
+  {
+    "id": "q57_error_version_lookup",
+    "question": "When a --version flag is invoked without an explicit version, which two version-detection failures raise RuntimeError, and when is the callback skipped entirely?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 484,
+        "end_line": 520,
+        "symbol": "version_option.callback",
+        "rationale": "The callback guards inactive/resilient cases and raises separate errors for missing package metadata and unresolved version."
+      }
+    ],
+    "gold_answer": "If the flag value is false or parsing is resilient, the callback returns without doing anything. Otherwise, when version is absent but package_name exists, it asks package metadata for that version; PackageNotFoundError becomes a RuntimeError saying the package is not installed. If version is still None afterward, it raises a separate RuntimeError saying automatic version detection failed. A resolved version is printed and the context exits."
+  },
+  {
+    "id": "q58_error_missing_option_values",
+    "question": "What does OptionParser._get_value_from_state do when too few values remain for an option, and how is an option allowed to omit its value treated?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 461,
+        "end_line": 497,
+        "symbol": "OptionParser._get_value_from_state",
+        "rationale": "The method distinguishes a required missing value from the sentinel used by prompt-capable options and protects the next option-like token."
+      }
+    ],
+    "gold_answer": "If fewer than nargs tokens remain, a normal value-taking option raises BadOptionUsage saying that one or more arguments are required. If the option's _flag_needs_value is set, it returns that sentinel instead. For a one-value such option, a following token that looks like another option also causes the sentinel to be returned without consuming that token."
+  },
+  {
+    "id": "q59_error_float_open_range_clamp",
+    "question": "What happens when FloatRange is constructed with clamp=True and either min_open=True or max_open=True?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 568,
+        "end_line": 581,
+        "symbol": "FloatRange.__init__",
+        "rationale": "The constructor rejects clamping whenever either floating-point boundary is open."
+      }
+    ],
+    "gold_answer": "The constructor raises TypeError('Clamping is not supported for open bounds.') when clamp is true and either boundary is marked open. A FloatRange with a closed boundary can use clamping; an open range must leave clamp false."
+  },
+  {
+    "id": "q60_error_invalid_uuid",
+    "question": "How does UUIDParameterType.convert handle an existing UUID object, surrounding whitespace in a UUID string, and an invalid UUID string?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 621,
+        "end_line": 636,
+        "symbol": "UUIDParameterType.convert",
+        "rationale": "The converter fast-paths UUID instances, strips string whitespace, and reports parsing failure through self.fail."
+      }
+    ],
+    "gold_answer": "An existing uuid.UUID instance is returned unchanged. Otherwise the input is stripped and passed to uuid.UUID, so surrounding whitespace is ignored. A ValueError from UUID parsing is converted to a parameter failure with a message saying that the stripped value is not a valid UUID."
+  },
+  {
+    "id": "q61_error_custom_converter_valueerror",
+    "question": "If a callable wrapped by FuncParamType raises ValueError, how does Click construct the error value and which parameter error does it raise?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 174,
+        "end_line": 185,
+        "symbol": "FuncParamType.convert",
+        "rationale": "The ValueError handler stringifies the failing value, falls back to UTF-8 replacement decoding, then calls self.fail."
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 129,
+        "end_line": 136,
+        "symbol": "ParamType.fail",
+        "rationale": "ParamType.fail turns the converter's failure into BadParameter carrying the parameter and context."
+      }
+    ],
+    "gold_answer": "FuncParamType.convert first calls the wrapped function. It catches ValueError, attempts str(value) for the error text, and if that string conversion raises UnicodeError, decodes the value as UTF-8 with replacement. It then calls self.fail, which raises BadParameter associated with the parameter and context. Other exception types from the callable are not caught here."
+  },
+  {
+    "id": "q62_error_unknown_style_color",
+    "question": "What exception does style raise for an unknown foreground or background color name, and are the two cases handled separately?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 552,
+        "end_line": 567,
+        "symbol": "style",
+        "rationale": "Separate foreground and background lookups catch KeyError and translate it to TypeError naming the invalid color."
+      }
+    ],
+    "gold_answer": "It converts a non-string message to str, then handles foreground and background colors in separate branches. If either color lookup raises KeyError, that branch raises TypeError('Unknown color ...') using the offending foreground or background value, suppressing the KeyError context."
+  },
+  {
+    "id": "q63_error_atomic_open_modes",
+    "question": "Which atomic open modes does open_stream reject for an ordinary filename, and what special-case filename bypasses those checks?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 373,
+        "end_line": 409,
+        "symbol": "open_stream",
+        "rationale": "The function handles '-' standard streams before atomic validation, then rejects append, exclusive-create, and modes without writing."
+      }
+    ],
+    "gold_answer": "With atomic=True on an ordinary file, append mode raises ValueError because it would require copying the existing file, exclusive-create mode raises ValueError directing the caller to overwrite, and a mode without 'w' raises ValueError because atomic writes require write mode. The filename '-' is handled first as stdin or stdout and ignores the atomic flag."
+  },
+  {
+    "id": "q64_error_unsupported_completion_request",
+    "question": "What status code does shell_complete return for an unknown shell or an unsupported completion instruction, and when does it return success?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 17,
+        "end_line": 52,
+        "symbol": "shell_complete",
+        "rationale": "The dispatcher returns failure for missing shell handlers or unmatched instructions and success after source or completion output."
+      }
+    ],
+    "gold_answer": "It returns status code 1 if get_completion_class cannot find the named shell or if the instruction is neither 'source' nor 'complete'. For a recognized shell with either supported instruction, it emits the generated script or completion data and returns 0."
+  },
+  {
+    "id": "q65_explain_context_info_export",
+    "question": "Explain what Context.to_info_dict exports for documentation tools and how it obtains the command-specific portion.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 432,
+        "end_line": 451,
+        "symbol": "Context.to_info_dict",
+        "rationale": "The method assembles the command description and context parsing settings into one dictionary."
+      }
+    ],
+    "gold_answer": "It calls self.command.to_info_dict(self) for the command portion, passing this context so command details can be generated in the current invocation setting. The returned dictionary also contains info_name, allow_extra_args, allow_interspersed_args, ignore_unknown_options, and auto_envvar_prefix."
+  },
+  {
+    "id": "q66_explain_command_collection_lookup",
+    "question": "Explain how CommandCollection searches multiple sources for a command and builds its combined command listing.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1981,
+        "end_line": 1999,
+        "symbol": "CommandCollection.get_command; CommandCollection.list_commands",
+        "rationale": "The two methods show first-match lookup, chained-child validation, and sorted deduplicated listing."
+      }
+    ],
+    "gold_answer": "get_command asks each source in order and returns the first non-None command, so an earlier source wins when names collide. In chain mode it validates that selected command against the chained-parent restriction before returning it; no match returns None. list_commands unions command names from all sources into a set and returns a sorted list, removing duplicates."
+  },
+  {
+    "id": "q67_explain_chained_invocation",
+    "question": "Explain how MultiCommand.invoke executes a non-empty chain of subcommands and passes their results to a result callback.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1690,
+        "end_line": 1720,
+        "symbol": "MultiCommand.invoke",
+        "rationale": "The chain branch creates child contexts, invokes them in order, and processes their result list."
+      }
+    ],
+    "gold_answer": "It enters the group context, marks invoked_subcommand as '*' when chain arguments exist, and invokes the group callback. It resolves each remaining subcommand and builds a child context with extra arguments allowed and interspersed arguments disabled, carrying the leftover arguments forward to the next child. It then invokes each child in order within its context, collects their return values in a list, and passes that list through the group's result callback if one is registered."
+  },
+  {
+    "id": "q68_explain_parameter_type_cast_shape",
+    "question": "Explain how Parameter.type_cast_value shapes a parsed value for one value, a variadic nargs, a fixed nargs greater than one, and multiple=True.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2295,
+        "end_line": 2344,
+        "symbol": "Parameter.type_cast_value",
+        "rationale": "The method handles missing values, iterable validation, arity-specific conversion, and outer multiplicity."
+      }
+    ],
+    "gold_answer": "A missing value becomes an empty tuple for multiple or variadic parameters and None otherwise. For nargs=1 or a composite type it applies the type directly. For nargs=-1 it type-converts each element into a tuple; for fixed nargs greater than one it requires exactly that many iterable elements and returns a tuple of converted values. With multiple=True, it applies that conversion to each occurrence and returns an outer tuple. Non-iterable input where an iterable is required raises BadParameter."
+  },
+  {
+    "id": "q69_explain_multicommand_parse_partition",
+    "question": "Explain how MultiCommand.parse_args partitions leftover tokens for a regular group versus a chained group, and its no-arguments help behavior.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1639,
+        "end_line": 1652,
+        "symbol": "MultiCommand.parse_args",
+        "rationale": "The method handles no-argument help and stores leftover tokens differently for chained and ordinary groups."
+      }
+    ],
+    "gold_answer": "If no arguments are supplied and no_args_is_help is enabled outside resilient parsing, it prints help and exits. Otherwise it lets the parent parser consume the group's own parameters. In chain mode all leftover tokens become protected_args and ctx.args is emptied. In ordinary mode only the first leftover token becomes protected_args, representing the subcommand name, while later tokens remain in ctx.args. It returns ctx.args."
+  },
+  {
+    "id": "q70_explain_safecall",
+    "question": "Explain what utils.safecall's returned wrapper does with a successful call, an exception, and the original function's metadata.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 33,
+        "end_line": 43,
+        "symbol": "safecall",
+        "rationale": "The small decorator shows result forwarding, Exception swallowing, and update_wrapper metadata copying."
+      }
+    ],
+    "gold_answer": "safecall returns a wrapper that calls the original function with the same arguments and returns its result on success. It catches Exception subclasses and returns None instead of propagating them, but does not catch BaseException-only cases such as KeyboardInterrupt. update_wrapper copies the original function's metadata onto the wrapper."
+  },
+  {
+    "id": "q71_explain_option_envvar_shape",
+    "question": "Explain how Option.value_from_envvar changes the shape of an environment-variable value for multiple options and options with nargs other than one.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2915,
+        "end_line": 2929,
+        "symbol": "Option.value_from_envvar",
+        "rationale": "This override computes value depth, splits the string, and batches values when both multiplicity and arity require nesting."
+      }
+    ],
+    "gold_answer": "It first resolves the environment value and returns None if absent. For an option with multiple=True or nargs not equal to one, it splits the string using the parameter type's split_envvar_value. When both conditions hold, it batches the split values into tuples of nargs elements. Otherwise it returns the resolved string or flat split list."
+  },
+  {
+    "id": "q72_explain_cached_stream_wrapper",
+    "question": "Explain how _make_cached_stream_func reuses a corrected text-stream wrapper while adapting if the underlying standard stream changes.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 578,
+        "end_line": 608,
+        "symbol": "_make_cached_stream_func",
+        "rationale": "The closure uses a weak-key cache keyed by the source stream and constructs wrappers only when needed."
+      }
+    ],
+    "gold_answer": "The returned function asks src_func for the current stream each time. It returns None if there is none, otherwise looks up that stream in a WeakKeyDictionary and returns its cached wrapper when available. For a new stream it calls wrapper_func, tries to cache the wrapper, and returns it. Cache lookup or insertion failures are ignored, so unsupported stream objects still receive a wrapper without breaking access. The three default stdin/stdout/stderr helpers are built this way."
+  },
+  {
+    "id": "q73_explain_clear_terminal",
+    "question": "Explain why click.clear() sometimes emits nothing and which terminal operations its output performs when it does run.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 435,
+        "end_line": 446,
+        "symbol": "clear",
+        "rationale": "The function checks TTY status and writes ANSI clear-screen and cursor-home escapes without a newline."
+      }
+    ],
+    "gold_answer": "It returns immediately when stdout is not a TTY, so redirected output is not filled with control codes. On a terminal it echoes the ANSI sequence '\\033[2J\\033[1;1H' with nl=False: the first code clears the visible screen, and the second moves the cursor to the upper-left position without adding a newline."
+  },
+  {
+    "id": "q74_explain_open_url_dispatch",
+    "question": "Explain how the internal open_url helper launches or locates a URL across macOS, Windows, Cygwin, and other systems, including its final fallback.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 573,
+        "end_line": 630,
+        "symbol": "open_url",
+        "rationale": "The function contains each platform branch and the xdg-open/webbrowser fallback."
+      }
+    ],
+    "gold_answer": "On macOS it invokes 'open', adding -W for wait and -R for locate. Windows uses explorer /select for locate or start for opening; Cygwin uses cygstart. Other systems use xdg-open, passing a containing directory for locate and optionally waiting for the process. File URLs are unquoted where appropriate. If xdg-open cannot start, an ordinary non-waiting HTTP(S) open falls back to Python's webbrowser and returns success; otherwise it returns failure."
+  },
+  {
+    "id": "q75_explain_short_option_cluster",
+    "question": "Explain how OptionParser._match_short_opt processes a cluster such as -abc, including a value-taking option and unknown letters under ignore_unknown_options.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 421,
+        "end_line": 459,
+        "symbol": "OptionParser._match_short_opt",
+        "rationale": "The loop splits short-option clusters, handles attached values, and preserves ignored unknown letters."
+      }
+    ],
+    "gold_answer": "It walks each letter after the shared prefix, normalizes its short option spelling, and looks up the registered option. An unknown letter raises NoSuchOption unless ignore_unknown_options is enabled, in which case the unknown letters are saved. When an option takes a value, any remaining characters in the cluster are pushed back as its next argument and cluster scanning stops; otherwise the flag is processed with no value. Ignored unknown letters are later reassembled with their prefix into leftover arguments."
+  },
+  {
+    "id": "q76_explain_join_options",
+    "question": "Explain how formatting.join_options orders option spellings and reports whether any spelling uses a slash prefix.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/formatting.py",
+        "start_line": 283,
+        "end_line": 301,
+        "symbol": "join_options",
+        "rationale": "The function measures option prefixes, sorts spellings, joins them, and tracks slash-prefixed forms."
+      }
+    ],
+    "gold_answer": "For every option spelling it obtains the prefix with split_opt, records the prefix length with the original spelling, and notes if a prefix is '/'. It sorts by prefix length, joins the original spellings with ', ', and returns that display string plus a Boolean indicating whether any slash-prefixed spelling occurred."
+  },
+  {
+    "id": "q77_explain_progress_bar_format",
+    "question": "Explain how ProgressBar.format_bar renders a known-length bar versus an unknown-length bar before and after completion.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 182,
+        "end_line": 199,
+        "symbol": "ProgressBar.format_bar",
+        "rationale": "These branches cover percentage fill, completed unknown length, and animated unknown length."
+      }
+    ],
+    "gold_answer": "When length is known, it fills int(pct * width) positions and pads the remainder with empty_char. With unknown length and finished=True, every position is filled. With unknown length while still running, it starts with empty characters and, once time_per_iteration is nonzero, places a moving fill character using a cosine of progress position and iteration time."
+  },
+  {
+    "id": "q78_explain_path_result_coercion",
+    "question": "Explain how Path.coerce_path_result turns a path value into a requested string, bytes, or path-like result type.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 840,
+        "end_line": 851,
+        "symbol": "Path.coerce_path_result",
+        "rationale": "The method covers identity, fsdecode, fsencode, and constructing a configured path class."
+      }
+    ],
+    "gold_answer": "If no result type is configured, or the value is already an instance of that type, it returns the value unchanged. Otherwise a requested str result uses os.fsdecode, a requested bytes result uses os.fsencode, and another configured path-like type is constructed from the value. This controls the returned representation, separate from existence or permission checks."
+  },
+  {
+    "id": "q79_explain_text_stream_rewrap",
+    "question": "Explain when _force_correct_text_stream returns an existing text stream unchanged and when it replaces it with a new text wrapper.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_compat.py",
+        "start_line": 234,
+        "end_line": 277,
+        "symbol": "_force_correct_text_stream",
+        "rationale": "The function checks compatibility, looks for an underlying binary stream, and builds a replacement wrapper."
+      }
+    ],
+    "gold_answer": "A compatible text stream is returned as-is unless its default encoding is the misconfigured ASCII case. If it is unsuitable, the function tries to find its underlying binary stream; if none is available, it falls back to the original stream. A binary input or discoverable binary stream is wrapped with _make_text_stream using the requested encoding and errors, defaulting unspecified errors to 'replace', plus the requested readability or writability requirements."
+  },
+  {
+    "id": "q80_explain_long_word_wrap",
+    "question": "Explain what TextWrapper._handle_long_word does when a token exceeds the current line width, with and without break_long_words.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_textwrap.py",
+        "start_line": 7,
+        "end_line": 23,
+        "symbol": "TextWrapper._handle_long_word",
+        "rationale": "The override computes remaining space and has the two distinct long-word handling branches."
+      }
+    ],
+    "gold_answer": "It computes at least one character of remaining space. With break_long_words enabled, it appends that many characters from the pending long chunk to the current line and leaves the remainder pending. With breaking disabled, it adds the entire chunk only if the current line is empty; otherwise it leaves the chunk for a later line."
+  }
+]

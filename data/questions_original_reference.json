@@ -1,0 +1,347 @@
+[
+  {
+    "id": "q01_exact_context_invoke",
+    "question": "How does Context.invoke behave when its callback argument is a Command, including callback validation, default parameter filling, and context management?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 732,
+        "end_line": 783
+      }
+    ],
+    "expected_answer": "A Command receives a child context and type-cast defaults for missing exposed parameters. A plain callable reuses the current context. Both execute inside context and usage-error management.",
+    "gold_evidence_note": "src/click/core.py, lines 732–783, Context.invoke."
+  },
+  {
+    "id": "q02_exact_option_parse_decls",
+    "question": "What validation and name-normalization rules does Option._parse_decls apply to option declarations?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2642,
+        "end_line": 2693
+      }
+    ],
+    "expected_answer": "It separates primary and secondary flags, rejects duplicate or invalid declarations, and otherwise derives a lowercase, underscore-normalized Python identifier from the longest option name.",
+    "gold_evidence_note": "src/click/core.py, lines 2642–2693, Option._parse_decls."
+  },
+  {
+    "id": "q03_exact_lazyfile_open_close",
+    "question": "How do LazyFile.open and LazyFile.close_intelligently handle deferred opening, open failures, and streams that the wrapper does not own?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 148,
+        "end_line": 176
+      }
+    ],
+    "expected_answer": "Deferred opening caches the stream and converts OSError to FileError. Intelligent closing closes only streams marked as owned by the wrapper.",
+    "gold_evidence_note": "src/click/utils.py, lines 148–176, LazyFile.open and LazyFile.close_intelligently."
+  },
+  {
+    "id": "q04_exact_resolve_incomplete",
+    "question": "What precedence does _resolve_incomplete use to choose the object responsible for shell completion?",
+    "category": "exact_identifier",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/shell_completion.py",
+        "start_line": 552,
+        "end_line": 596
+      }
+    ],
+    "expected_answer": "It normalizes equals-form option values, then prefers command-level option-name completion, an option awaiting a value, the first incomplete positional argument, and finally the command itself.",
+    "gold_evidence_note": "src/click/shell_completion.py, lines 552–596, _resolve_incomplete."
+  },
+  {
+    "id": "q05_semantic_color_default",
+    "question": "When a terminal color preference is omitted, where does the library obtain it, and what is returned when there is no active invocation?",
+    "category": "semantic_behaviour",
+    "split": "dev",
+    "gold_spans": [
+      {
+        "path": "src/click/globals.py",
+        "start_line": 55,
+        "end_line": 68
+      }
+    ],
+    "expected_answer": "An explicit value is preserved. Otherwise, the active Context's colour setting is used; None is returned when no Context exists.",
+    "gold_evidence_note": "src/click/globals.py, lines 55–68, resolve_color_default."
+  },
+  {
+    "id": "q06_semantic_progress_count_only",
+    "question": "A progress display is created with only a total count and no iterable. What will it iterate over, and what happens if neither an iterable nor a count is available?",
+    "category": "semantic_behaviour",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 81,
+        "end_line": 93
+      }
+    ],
+    "expected_answer": "A count-only progress display iterates over range(length). Omitting both sources raises TypeError(\"iterable or length is required\").",
+    "gold_evidence_note": "src/click/_termui_impl.py, lines 81–93, ProgressBar.__init__."
+  },
+  {
+    "id": "q07_semantic_parameter_processing_order",
+    "question": "In what order are eager and ordinary command-line parameters processed, and where do declared parameters that were not mentioned by the user appear?",
+    "category": "semantic_behaviour",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 114,
+        "end_line": 131
+      }
+    ],
+    "expected_answer": "Eager parameters come first, each group follows command-line invocation order, and unmentioned parameters follow mentioned peers with stable declaration order among ties.",
+    "gold_evidence_note": "src/click/core.py, lines 114–131, iter_params_for_processing."
+  },
+  {
+    "id": "q08_semantic_help_paragraph_wrapping",
+    "question": "How does help-text wrapping preserve paragraph indentation and allow one paragraph to opt out of reflowing?",
+    "category": "semantic_behaviour",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/formatting.py",
+        "start_line": 56,
+        "end_line": 99
+      }
+    ],
+    "expected_answer": "Empty lines delimit paragraphs, leading display width supplies indentation, and a backspace-marked paragraph receives indentation without text reflow.",
+    "gold_evidence_note": "src/click/formatting.py, lines 56–99, wrap_text."
+  },
+  {
+    "id": "q09_cross_decorated_parameter_flow",
+    "question": "Trace how an @option-created parameter is stored on a decorated function and transferred into the final Command.params list. Why is the temporary list reversed?",
+    "category": "cross_file",
+    "split": "dev",
+    "gold_spans": [
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 313,
+        "end_line": 320
+      },
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 216,
+        "end_line": 245
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 1202,
+        "end_line": 1224
+      }
+    ],
+    "expected_answer": "Parameters accumulate on __click_params__, are reversed to compensate for bottom-up decorator application, and are passed to Command.__init__ as the ordered params list.",
+    "gold_evidence_note": "src/click/decorators.py lines 313–320 (_param_memo); src/click/decorators.py lines 216–245 (command decorator); src/click/core.py lines 1202–1224 (Command.__init__)."
+  },
+  {
+    "id": "q10_cross_current_context_stack",
+    "question": "Trace how @pass_context obtains the currently active Context when a command callback runs, including how that Context becomes current and is later removed.",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/decorators.py",
+        "start_line": 27,
+        "end_line": 35
+      },
+      {
+        "path": "src/click/globals.py",
+        "start_line": 21,
+        "end_line": 52
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 453,
+        "end_line": 467
+      }
+    ],
+    "expected_answer": "Context entry pushes the object onto a thread-local stack, pass_context retrieves and prepends the stack's top item, and context exit pops it after zero-depth cleanup.",
+    "gold_evidence_note": "src/click/decorators.py lines 27–35 (pass_context); src/click/globals.py lines 21–52 (get_current_context, push_context, pop_context); src/click/core.py lines 453–467 (Context.__enter__, Context.__exit__)."
+  },
+  {
+    "id": "q11_cross_progressbar_factory",
+    "question": "Trace the public progressbar factory into the internal progress object. Where are color inheritance, output-stream fallback, length inference, and TTY visibility decided?",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/termui.py",
+        "start_line": 413,
+        "end_line": 432
+      },
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 38,
+        "end_line": 105
+      }
+    ],
+    "expected_answer": "The public factory resolves inherited colour and forwards configuration. The implementation selects stdout or StringIO, infers or synthesizes length, and hides output for non-TTY streams.",
+    "gold_evidence_note": "src/click/termui.py lines 413–432 (progressbar); src/click/_termui_impl.py lines 38–105 (ProgressBar.__init__)."
+  },
+  {
+    "id": "q12_cross_lazy_file_lifecycle",
+    "question": "For a lazily opened file parameter, trace creation, cleanup registration, deferred open-error conversion, and eventual teardown across the repository.",
+    "category": "cross_file",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 691,
+        "end_line": 741
+      },
+      {
+        "path": "src/click/utils.py",
+        "start_line": 148,
+        "end_line": 176
+      },
+      {
+        "path": "src/click/core.py",
+        "start_line": 578,
+        "end_line": 597
+      }
+    ],
+    "expected_answer": "File conversion selects lazy mode and registers ownership-aware cleanup. Deferred opening converts OS failures to FileError, and Context teardown runs the callback through its exit stack.",
+    "gold_evidence_note": "src/click/types.py lines 691–741 (File.resolve_lazy_flag and File.convert); src/click/utils.py lines 148–176 (LazyFile.open and close_intelligently); src/click/core.py lines 578–597 (Context.call_on_close and Context.close)."
+  },
+  {
+    "id": "q13_error_unknown_long_option",
+    "question": "A user misspells a long option. How are suggestions selected and how is the final error message formatted when there is one suggestion versus several?",
+    "category": "error_edge_case",
+    "split": "dev",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 391,
+        "end_line": 399
+      },
+      {
+        "path": "src/click/exceptions.py",
+        "start_line": 197,
+        "end_line": 228
+      }
+    ],
+    "expected_answer": "Close matches are selected with difflib.get_close_matches, then sorted and rendered as “Did you mean …?” for one candidate or “Possible options” for several.",
+    "gold_evidence_note": "src/click/parser.py lines 391–399 (OptionParser._match_long_opt); src/click/exceptions.py lines 197–228 (NoSuchOption)."
+  },
+  {
+    "id": "q14_error_path_dash_missing",
+    "question": "For a path-valued parameter, how are the special '-' value and a missing filesystem entry handled under the allow-dash and must-exist settings?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/types.py",
+        "start_line": 853,
+        "end_line": 882
+      },
+      {
+        "path": "src/click/types.py",
+        "start_line": 928,
+        "end_line": 928
+      }
+    ],
+    "expected_answer": "Dash bypasses filesystem checks only when file paths and dash are allowed. A missing ordinary path is accepted when existence is optional and otherwise fails validation.",
+    "gold_evidence_note": "src/click/types.py lines 853–882 and line 928, Path.convert."
+  },
+  {
+    "id": "q15_error_invalid_option_combinations",
+    "question": "Which incompatible Option constructor settings are rejected by the debug-time validation block, and what exception is raised?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 2608,
+        "end_line": 2628
+      }
+    ],
+    "expected_answer": "With __debug__ enabled, TypeError is raised for nargs=-1, invalid prompt or secondary-flag combinations, boolean prompt plus hidden input, and count combined with multiple or flag mode.",
+    "gold_evidence_note": "src/click/core.py, lines 2608–2628, Option.__init__."
+  },
+  {
+    "id": "q16_error_main_exception_policy",
+    "question": "How does the top-level command runner treat Ctrl-C or EOF, Click-specific errors, broken pipes, explicit exits, and aborts in standalone versus non-standalone mode?",
+    "category": "error_edge_case",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 1075,
+        "end_line": 1121
+      }
+    ],
+    "expected_answer": "Interactive interruption becomes Abort. Outside standalone mode, Click errors and explicit exits propagate or return; inside it, they display or terminate. Broken pipes exit cleanly with code 1, and standalone aborts print “Aborted!” before exiting 1.",
+    "gold_evidence_note": "src/click/core.py, lines 1075–1121, BaseCommand.main."
+  },
+  {
+    "id": "q17_explain_scope_cleanup",
+    "question": "Explain how Context.scope(cleanup=False) temporarily makes a context current without triggering its registered cleanup, including the role of the nesting-depth counter.",
+    "category": "code_explanation",
+    "split": "dev",
+    "gold_spans": [
+      {
+        "path": "src/click/core.py",
+        "start_line": 453,
+        "end_line": 505
+      }
+    ],
+    "expected_answer": "An extra depth increment prevents nested exit from reaching zero and running cleanup while normal stack push/pop still occurs. The extra depth is then removed and cleanup remains deferred.",
+    "gold_evidence_note": "src/click/core.py, lines 453–505, Context.__enter__, Context.__exit__, and Context.scope."
+  },
+  {
+    "id": "q18_explain_short_help",
+    "question": "Explain how make_default_short_help turns a long help string into a concise summary and decides whether to append an ellipsis.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/utils.py",
+        "start_line": 56,
+        "end_line": 103
+      }
+    ],
+    "expected_answer": "It keeps the first paragraph, collapses whitespace, prefers a complete first sentence, returns already-fitting text unchanged, and otherwise removes whole words until an ellipsis-inclusive result fits.",
+    "gold_evidence_note": "src/click/utils.py, lines 56–103, make_default_short_help."
+  },
+  {
+    "id": "q19_explain_unpack_args",
+    "question": "Explain how _unpack_args assigns tokens for fixed arities around a wildcard arity, fills missing values, and rejects an ambiguous specification.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/parser.py",
+        "start_line": 49,
+        "end_line": 106
+      }
+    ],
+    "expected_answer": "It consumes leading fixed arguments from the left and trailing fixed arguments from the right around one wildcard, fills shortages with None, restores forward order, and rejects a second negative arity.",
+    "gold_evidence_note": "src/click/parser.py, lines 49–106, _unpack_args."
+  },
+  {
+    "id": "q20_explain_progress_generator",
+    "question": "Explain why ProgressBar.generator updates after yielding each item, and how it behaves when used outside a with-block or when output is hidden.",
+    "category": "code_explanation",
+    "split": "test",
+    "gold_spans": [
+      {
+        "path": "src/click/_termui_impl.py",
+        "start_line": 326,
+        "end_line": 357
+      }
+    ],
+    "expected_answer": "It requires context-manager entry and delegates directly when hidden. Otherwise, it exposes the current item before processing, advances only after control returns, and finishes with a final render.",
+    "gold_evidence_note": "src/click/_termui_impl.py, lines 326–357, ProgressBar.generator."
+  }
+]
