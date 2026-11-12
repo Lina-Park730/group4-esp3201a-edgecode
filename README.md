@@ -28,6 +28,69 @@ repository/click-8.1.7/src/click/
 
 The Click source is an external experimental corpus and is not included in this repository. Installing Click with pip does not create the required source folder. FastEmbed downloads the embedding model on first use.
 
+## Try the browser demo locally
+
+The demo provides a browser interface for asking questions about Click 8.1.7. The Python server runs retrieval and sends the prompt to a local Ollama model. GitHub Pages can host static files, but it cannot run this Python server or Ollama; the steps below run the complete demo on one computer.
+
+### Requirements
+
+- Python 3.10 or later
+- [Ollama](https://ollama.com/download) installed and running
+- A model downloaded into Ollama, such as `gemma4:e4b`
+- The Click 8.1.7 source tree at `repository/click-8.1.7/src/click/` (see Setup above)
+
+Check which Ollama models are installed:
+
+```bash
+ollama list
+```
+
+If the chosen model is not listed, download it once:
+
+```bash
+ollama pull gemma4:e4b
+```
+
+### Start the demo
+
+From the repository root, create and activate an environment, then install the dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+```
+
+On Windows, activate it with `.venv\\Scripts\\activate`.
+
+Start the server using a model shown by `ollama list`:
+
+```bash
+python3 web_server.py --model gemma4:e4b
+```
+
+Open [http://localhost:8000](http://localhost:8000). The first startup checks Ollama and builds an in-memory code index. Wait for **Ready · Click 8.1.7** before asking a question. Leave this terminal and Ollama running while using the demo. Press `Ctrl+C` in the terminal to stop it.
+
+The default demo settings are AST Hybrid retrieval, a 70-line chunk limit, K = 5 and BM25 weight 0.1. They are demo defaults and do not require running the development or evaluation pipeline. Override them with `--lines`, `--k` and `--alpha`.
+
+### Share it on a local network
+
+To let other devices on the same trusted network use the demo, start it with:
+
+```bash
+python3 web_server.py --host 0.0.0.0 --port 8000 --model gemma4:e4b
+```
+
+They can open `http://<HOST-IP>:8000`, replacing `<HOST-IP>` with the computer's local network IP address. The computer must remain on, Ollama must remain running, and the network must allow connections to port 8000. This shares access to the host's model and code index; use this only on a trusted network.
+
+A public internet demo needs an always-on Python host, the Click source, the embedding model and an Ollama model reachable by that host. Put HTTPS and access controls in front of the server before making it public. The repository contains the app and local run instructions; it does not include a hosted demo URL or cloud hosting configuration.
+
+### Demo files
+
+- `web/index.html`: question form, answer display and cited source excerpts
+- `web_server.py`: FastAPI server, retrieval setup and Ollama connection
+- `requirements.txt`: Python dependencies for the demo and experiment pipeline
+
 ## Run the experiments
 
 Run commands from the project root.
