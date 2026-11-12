@@ -110,8 +110,6 @@ Experiment settings are in `config/pipeline.json`.
 | RRF constant | 60 |
 | Development Top-K values | 3, 5, 7 |
 | Gold-span coverage threshold | 25%, with at least one overlapping line |
-| Retrieval timing | 1 warm-up and 3 measured repetitions per query |
-| Generation context budget | 3,000 using the configured token counter |
 
 AST chunking preserves functions and methods that fit within the line limit. Oversized units are split, and uncovered module or class context is also chunked.
 
