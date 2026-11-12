@@ -95,7 +95,6 @@ python3 ask.py --model MODEL_NAME --check
 python3 ask.py "How does Context.invoke handle defaults?" --model MODEL_NAME --arm ast_hybrid
 ```
 
-Use `--help` on an entry point to view its options.
 
 ## Configuration
 
@@ -152,12 +151,4 @@ The evaluation set was examined in earlier experiments. It is not a newly untouc
 | `repository/` | External Click source; excluded from Git |
 | `outputs/` | Generated selections, metrics, plots and answers; excluded from Git |
 
-## Checks
 
-```bash
-python3 -m unittest discover -s tests -v
-python3 run_pipeline.py --help
-python3 ask.py --help
-```
-
-The tests use synthetic embeddings and mocked Ollama responses. Live retrieval and generation require the embedding model, Click source and a running Ollama server for the generation stage.
